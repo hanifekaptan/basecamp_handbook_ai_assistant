@@ -141,7 +141,7 @@ No external API dependencies:
 
 **Technology**: Streamlit 1.31.0
 
-**Location**: [frontend/app.py](../frontend/app.py)
+**Location**: `frontend/app.py`
 
 ### Backend API (FastAPI)
 
@@ -154,7 +154,7 @@ No external API dependencies:
 
 **Technology**: FastAPI 0.109.0
 
-**Location**: [backend/main.py](../backend/main.py)
+**Location**: `backend/main.py`
 
 ### RAG Pipeline
 
@@ -168,7 +168,7 @@ No external API dependencies:
 5. Generate answer (Ollama)
 6. Return answer with sources
 
-**Location**: [backend/app/services/rag_pipeline.py](../backend/app/services/rag_pipeline.py)
+**Location**: `backend/app/services/rag_pipeline.py`
 
 ### Vector DB Service
 
@@ -197,7 +197,7 @@ RecursiveCharacterTextSplitter(
 )
 ```
 
-**Location**: [backend/app/services/vector_db.py](../backend/app/services/vector_db.py)
+**Location**: `backend/app/services/vector_db.py`
 
 ### LLM Service
 
@@ -209,7 +209,7 @@ RecursiveCharacterTextSplitter(
 - Prompt template management
 - Temperature control
 
-**Location**: [backend/app/services/llm_service.py](../backend/app/services/llm_service.py)
+**Location**: `backend/app/services/llm_service.py`
 
 ### Prompt Manager
 
@@ -227,7 +227,7 @@ rag_templates:
   no_context: "I couldn't find information..."
 ```
 
-**Location**: [backend/app/core/prompt_manager.py](../backend/app/core/prompt_manager.py)
+**Location**: `backend/app/core/prompt_manager.py`
 
 ## Data Flow
 

@@ -6,7 +6,7 @@ This document provides detailed information about each component in the RAG syst
 
 ### RAG Pipeline
 
-**File**: [backend/app/services/rag_pipeline.py](../../backend/app/services/rag_pipeline.py)
+**File**: `backend/app/services/rag_pipeline.py`
 
 **Responsibility**: Orchestrates the entire RAG (Retrieval-Augmented Generation) process.
 
@@ -101,7 +101,7 @@ sequenceDiagram
 
 ### Vector DB Service
 
-**File**: [backend/app/services/vector_db.py](../../backend/app/services/vector_db.py)
+**File**: `backend/app/services/vector_db.py`
 
 **Responsibility**: Document indexing, embedding, and semantic search.
 
@@ -206,7 +206,7 @@ def _chunk_document_by_headers(
 
 ### LLM Service
 
-**File**: [backend/app/services/llm_service.py](../../backend/app/services/llm_service.py)
+**File**: `backend/app/services/llm_service.py`
 
 **Responsibility**: Interaction with Ollama for answer generation.
 
@@ -281,7 +281,7 @@ async def generate_stream(
 
 ### Prompt Manager
 
-**File**: [backend/app/core/prompt_manager.py](../../backend/app/core/prompt_manager.py)
+**File**: `backend/app/core/prompt_manager.py`
 
 **Responsibility**: Centralized prompt template management.
 
@@ -346,7 +346,7 @@ fallback = pm.get_no_context_message("vacation")
 
 #### Health Endpoint
 
-**File**: [backend/app/api/endpoints/health.py](../../backend/app/api/endpoints/health.py)
+**File**: `backend/app/api/endpoints/health.py`
 
 ```python
 @router.get("/health")
@@ -366,7 +366,7 @@ async def health_check() -> Dict[str, Any]:
 
 #### Questions Endpoint
 
-**File**: [backend/app/api/endpoints/questions.py](../../backend/app/api/endpoints/questions.py)
+**File**: `backend/app/api/endpoints/questions.py`
 
 ```python
 @router.post("/ask")
@@ -412,7 +412,7 @@ async def ask_question_stream(request: QuestionRequest):
 
 ### Database Connection
 
-**File**: [backend/app/database/connection.py](../../backend/app/database/connection.py)
+**File**: `backend/app/database/connection.py`
 
 **Pattern**: Singleton
 
@@ -445,7 +445,7 @@ class ChromaDBConnection:
 
 ### Configuration
 
-**File**: [backend/app/core/config.py](../../backend/app/core/config.py)
+**File**: `backend/app/core/config.py`
 
 ```python
 class Settings(BaseSettings):
@@ -480,7 +480,7 @@ class Settings(BaseSettings):
 
 ### Logging
 
-**File**: [backend/app/core/logging.py](../../backend/app/core/logging.py)
+**File**: `backend/app/core/logging.py`
 
 #### Features
 
@@ -522,7 +522,7 @@ logger.info(
 
 ### Streamlit App
 
-**File**: [frontend/app.py](../../frontend/app.py)
+**File**: `frontend/app.py`
 
 #### Structure
 
@@ -707,7 +707,7 @@ def index_directory(self, directory_path: str):
 
 - [Data Flow Details](data-flow.md) - Detailed sequence diagrams
 - [API Reference](../api/endpoints.md) - Complete API documentation
-- [Development Guide](../development/setup.md) - Set up dev environment
+- [Getting Started](../getting-started.md) - Installation and setup
 
 ---
 

@@ -6,11 +6,6 @@
 
 **Local Retrieval-Augmented Generation System for Employee Handbook**
 
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.109.0-green.svg)](https://fastapi.tiangolo.com/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.31.0-red.svg)](https://streamlit.io/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 </div>
 
 ## 🎯 Overview
@@ -66,8 +61,8 @@ graph TB
 
 ```bash
 # Clone repository
-git clone <repository-url>
-cd case-study-1
+git clone https://github.com/hanifekaptan/basecamp_handbook_ai_assistant.git
+cd basecamp_handbook_ai_assistant
 
 # Setup backend
 cd backend
@@ -84,7 +79,7 @@ ollama pull llama3.2:3b
 
 ### Running
 
-#### Option 1: Docker (Recommended)
+#### Option 1: Docker
 
 ```bash
 cd docker
@@ -115,7 +110,6 @@ streamlit run app.py
 - **[Getting Started](getting-started.md)** - Installation and setup guide
 - **[Architecture](architecture/overview.md)** - System design and components
 - **[API Reference](api/endpoints.md)** - Complete API documentation
-- **[Development](development/setup.md)** - Development workflow
 
 ## 🎯 Use Cases
 
@@ -172,27 +166,15 @@ streamlit run app.py
 
     [:octicons-arrow-right-24: Architecture Overview](architecture/overview.md)
 
--   :material-code-braces:{ .lg .middle } **Development**
-
-    ---
-
-    Contribute to the project
-
-    [:octicons-arrow-right-24: Dev Guide](development/setup.md)
-
 </div>
-
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guide](development/contributing.md) for details.
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the APACHE License - see the LICENSE file for details.
 
 ---
 
 <div align="center">
     <p><strong>Built with ❤️ for modern RAG applications</strong></p>
-    <p>© 2026 Yinovation Case Study</p>
+    <p>© 2026 </p>
 </div>

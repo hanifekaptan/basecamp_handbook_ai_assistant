@@ -8,8 +8,8 @@ If you have Docker installed, this is the quickest way to get started:
 
 ```bash
 # 1. Clone and navigate
-git clone <repository-url>
-cd case-study-1
+git clone https://github.com/hanifekaptan/basecamp_handbook_ai_assistant.git
+cd basecamp_handbook_ai_assistant
 
 # 2. Start all services
 cd docker
@@ -88,8 +88,7 @@ pip install -r requirements.txt
 ollama serve
 
 # Terminal 2: Backend
-cd backend
-python main.py
+python backend/main.py
 
 # Terminal 3: Frontend
 cd frontend
@@ -138,7 +137,7 @@ Edit `backend/.env`:
 OLLAMA_MODEL=llama3.2:latest
 
 # Adjust answer creativity (0.0-1.0)
-TEMPERATURE=0.5
+TEMPERATURE=0.3
 
 # Get more context per query
 TOP_K_RESULTS=10
@@ -203,18 +202,6 @@ python backend/main.py
 
     [API Reference →](api/endpoints.md)
 
--   **Run Tests**
-
-    Verify everything works
-
-    [Testing Guide →](development/testing.md)
-
--   **Customize Prompts**
-
-    Tailor answer generation
-
-    [Prompt Management →](development/prompts.md)
-
 </div>
 
 ## 🎯 Example Questions
@@ -245,4 +232,4 @@ Try these questions to explore the system:
 
 ---
 
-**Need help?** Check the [full documentation](index.md) or see [troubleshooting guide](development/troubleshooting.md).
+**Need help?** Check the [full documentation](index.md) for more information.

@@ -652,7 +652,7 @@ data/
 
 - [Component Details](components.md) - Deep dive into each component
 - [API Examples](../api/examples.md) - API usage examples
-- [Performance Tuning](../development/performance.md) - Optimization guide
+- [Architecture Overview](overview.md) - High-level system design
 
 ---
 

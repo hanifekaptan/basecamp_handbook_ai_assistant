@@ -23,8 +23,8 @@ Before you begin, ensure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
-cd case-study-1
+git clone https://github.com/hanifekaptan/basecamp_handbook_ai_assistant.git
+cd basecamp_handbook_ai_assistant
 ```
 
 ### 2. Install Ollama and Pull Model
@@ -190,7 +190,7 @@ Change ports in:
 
 - [Architecture Overview](architecture/overview.md) - Understand the system design
 - [API Reference](api/endpoints.md) - Explore available endpoints
-- [Development Setup](development/setup.md) - Set up development environment
+- [Quick Start Guide](quick-start.md) - Start using the system
 
 ## Environment Variables
 

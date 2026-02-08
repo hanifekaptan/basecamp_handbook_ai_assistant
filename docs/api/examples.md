@@ -629,7 +629,7 @@ for i in range(20):
 
 - [API Endpoints](endpoints.md) - Complete endpoint reference
 - [API Schemas](schemas.md) - Detailed data models
-- [Development Guide](../development/setup.md) - Set up development environment
+- [Getting Started](../getting-started.md) - Installation and setup
 
 ---
 

@@ -16,6 +16,8 @@ RUN apt-get update && apt-get install -y \
     curl \
     wget \
     build-essential \
+    zstd \
+    procps \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -45,12 +47,12 @@ RUN ollama serve & \
 # Create necessary directories
 RUN mkdir -p /app/data/chroma_db /app/logs
 
-# Expose Streamlit port (8501) and FastAPI port (8000)
-EXPOSE 8501 8000
+# Expose Streamlit port (7860 for HF Spaces) and FastAPI port (8000)
+EXPOSE 7860 8000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8501/ || exit 1
+    CMD curl -f http://localhost:7860/ || exit 1
 
 # Start services
 CMD ["/app/start.sh"]

@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: basecamp-rag
     ports:
-      - "8501:8501" # Streamlit UI
+      - "7860:7860" # Streamlit UI (HF Spaces standard)
       - "8000:8000" # FastAPI Backend
       - "11434:11434" # Ollama (optional, for debugging)
     volumes:
@@ -23,7 +23,7 @@ services:
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8501/" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:7860/" ]
       interval: 30s
       timeout: 10s
       retries: 3

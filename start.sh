@@ -29,14 +29,14 @@ BACKEND_PID=$!
 # Wait for backend to be ready
 sleep 5
 
-# Start Streamlit frontend on port 8501
+# Start Streamlit frontend on port 7860 (HF Spaces standard)
 echo "============================================"
-echo "Starting Streamlit UI on port 8501..."
+echo "Starting Streamlit UI on port 7860..."
 echo "System ready!"
 echo "============================================"
 
 # Run Streamlit (this will keep the container running)
-streamlit run frontend/app.py --server.port=8501 --server.address=0.0.0.0
+streamlit run frontend/app.py --server.port=7860 --server.address=0.0.0.0
 
 # Cleanup on exit
 trap "echo 'Shutting down...'; kill $OLLAMA_PID $BACKEND_PID; exit" SIGTERM SIGINT

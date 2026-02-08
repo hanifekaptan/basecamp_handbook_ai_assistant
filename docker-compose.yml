@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  basecamp-rag:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: basecamp-rag
+    ports:
+      - "8501:8501" # Streamlit UI
+      - "8000:8000" # FastAPI Backend
+      - "11434:11434" # Ollama (optional, for debugging)
+    volumes:
+      # Persist ChromaDB data
+      - ./data/chroma_db:/app/data/chroma_db
+      # Persist logs
+      - ./logs:/app/logs
+      # For development: mount code (comment out for production)
+      # - ./backend:/app/backend
+      # - ./frontend:/app/frontend
+    environment:
+      - OLLAMA_HOST=127.0.0.1:11434
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8501/" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s

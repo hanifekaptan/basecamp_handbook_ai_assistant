@@ -15,9 +15,9 @@ services:
       - ./data/chroma_db:/app/data/chroma_db
       # Persist logs
       - ./logs:/app/logs
-      # For development: mount code (comment out for production)
-      # - ./backend:/app/backend
-      # - ./frontend:/app/frontend
+      # For development: mount code
+      - ./backend:/app/backend
+      - ./frontend:/app/frontend
     environment:
       - OLLAMA_HOST=127.0.0.1:11434
       - PYTHONUNBUFFERED=1

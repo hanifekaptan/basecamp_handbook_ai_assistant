@@ -1,0 +1,1617 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="Local RAG system for Basecamp Employee Handbook" name="description"/>
+<meta content="Hanife Kaptan" name="author"/>
+<link href="https://huggingface.co/spaces/hanifekaptan/basecamp_handbook_ai_assistant/architecture/data-flow/" rel="canonical"/>
+<link href="../components/" rel="prev"/>
+<link href="../../api/endpoints/" rel="next"/>
+<link href="../../assets/images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.6.1, mkdocs-material-9.7.1" name="generator"/>
+<title>Data Flow - Basecamp Handbook RAG API</title>
+<link href="../../assets/stylesheets/main.484c7ddc.min.css" rel="stylesheet"/>
+<link href="../../assets/stylesheets/palette.ab4e12ef.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body data-md-color-accent="blue" data-md-color-primary="indigo" data-md-color-scheme="default" dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#data-flow">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Basecamp Handbook RAG API" class="md-header__button md-logo" data-md-component="logo" href="../.." title="Basecamp Handbook RAG API">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            Basecamp Handbook RAG API
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              Data Flow
+            
+          </span>
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="blue" data-md-color-media="" data-md-color-primary="indigo" data-md-color-scheme="default" id="__palette_0" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+</label>
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="blue" data-md-color-media="" data-md-color-primary="indigo" data-md-color-scheme="slate" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_0" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+</label>
+</form>
+<script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+</button>
+</nav>
+<div class="md-search__suggest" data-md-component="search-suggest"></div>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="" tabindex="0">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list" role="presentation"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<nav aria-label="Tabs" class="md-tabs" data-md-component="tabs">
+<div class="md-grid">
+<ul class="md-tabs__list">
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../..">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../getting-started/">
+          
+  
+  
+  Getting Started
+
+        </a>
+</li>
+<li class="md-tabs__item md-tabs__item--active">
+<a class="md-tabs__link" href="../overview/">
+          
+  
+  
+  Architecture
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../api/endpoints/">
+          
+  
+  
+  API Reference
+
+        </a>
+</li>
+</ul>
+</div>
+</nav>
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Basecamp Handbook RAG API" class="md-nav__button md-logo" data-md-component="logo" href="../.." title="Basecamp Handbook RAG API">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+    Basecamp Handbook RAG API
+  </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../..">
+<span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+<span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../getting-started/">
+<span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../quick-start/">
+<span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+<span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_3_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../overview/">
+<span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../components/">
+<span class="md-ellipsis">
+    
+  
+    Components
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
+    
+  
+    Data Flow
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+<span class="md-ellipsis">
+    
+  
+    Data Flow
+  
+
+    
+  </span>
+</a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#overview">
+<span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#1-question-answering-flow">
+<span class="md-ellipsis">
+      
+        1. Question Answering Flow
+      
+    </span>
+</a>
+<nav aria-label="1. Question Answering Flow" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#high-level-flow">
+<span class="md-ellipsis">
+      
+        High-Level Flow
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#detailed-sequence">
+<span class="md-ellipsis">
+      
+        Detailed Sequence
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#data-transformations">
+<span class="md-ellipsis">
+      
+        Data Transformations
+      
+    </span>
+</a>
+<nav aria-label="Data Transformations" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#1-query-embedding">
+<span class="md-ellipsis">
+      
+        1. Query Embedding
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#2-vector-search">
+<span class="md-ellipsis">
+      
+        2. Vector Search
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#3-prompt-construction">
+<span class="md-ellipsis">
+      
+        3. Prompt Construction
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#4-llm-generation">
+<span class="md-ellipsis">
+      
+        4. LLM Generation
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#2-document-indexing-flow">
+<span class="md-ellipsis">
+      
+        2. Document Indexing Flow
+      
+    </span>
+</a>
+<nav aria-label="2. Document Indexing Flow" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#high-level-flow_1">
+<span class="md-ellipsis">
+      
+        High-Level Flow
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#detailed-sequence_1">
+<span class="md-ellipsis">
+      
+        Detailed Sequence
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#chunking-example">
+<span class="md-ellipsis">
+      
+        Chunking Example
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#3-health-check-flow">
+<span class="md-ellipsis">
+      
+        3. Health Check Flow
+      
+    </span>
+</a>
+<nav aria-label="3. Health Check Flow" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#sequence-diagram">
+<span class="md-ellipsis">
+      
+        Sequence Diagram
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#response-example">
+<span class="md-ellipsis">
+      
+        Response Example
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#4-streaming-response-flow">
+<span class="md-ellipsis">
+      
+        4. Streaming Response Flow
+      
+    </span>
+</a>
+<nav aria-label="4. Streaming Response Flow" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#sequence-diagram_1">
+<span class="md-ellipsis">
+      
+        Sequence Diagram
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#server-sent-events-format">
+<span class="md-ellipsis">
+      
+        Server-Sent Events Format
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#error-handling-flows">
+<span class="md-ellipsis">
+      
+        Error Handling Flows
+      
+    </span>
+</a>
+<nav aria-label="Error Handling Flows" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#no-context-found">
+<span class="md-ellipsis">
+      
+        No Context Found
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#ollama-unavailable">
+<span class="md-ellipsis">
+      
+        Ollama Unavailable
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#performance-metrics">
+<span class="md-ellipsis">
+      
+        Performance Metrics
+      
+    </span>
+</a>
+<nav aria-label="Performance Metrics" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#typical-latencies">
+<span class="md-ellipsis">
+      
+        Typical Latencies
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#optimization-opportunities">
+<span class="md-ellipsis">
+      
+        Optimization Opportunities
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#data-persistence">
+<span class="md-ellipsis">
+      
+        Data Persistence
+      
+    </span>
+</a>
+<nav aria-label="Data Persistence" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#chromadb-storage">
+<span class="md-ellipsis">
+      
+        ChromaDB Storage
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#next-steps">
+<span class="md-ellipsis">
+      
+        Next Steps
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+<span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_4_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api/endpoints/">
+<span class="md-ellipsis">
+    
+  
+    Endpoints
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api/schemas/">
+<span class="md-ellipsis">
+    
+  
+    Schemas
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api/examples/">
+<span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#overview">
+<span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#1-question-answering-flow">
+<span class="md-ellipsis">
+      
+        1. Question Answering Flow
+      
+    </span>
+</a>
+<nav aria-label="1. Question Answering Flow" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#high-level-flow">
+<span class="md-ellipsis">
+      
+        High-Level Flow
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#detailed-sequence">
+<span class="md-ellipsis">
+      
+        Detailed Sequence
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#data-transformations">
+<span class="md-ellipsis">
+      
+        Data Transformations
+      
+    </span>
+</a>
+<nav aria-label="Data Transformations" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#1-query-embedding">
+<span class="md-ellipsis">
+      
+        1. Query Embedding
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#2-vector-search">
+<span class="md-ellipsis">
+      
+        2. Vector Search
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#3-prompt-construction">
+<span class="md-ellipsis">
+      
+        3. Prompt Construction
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#4-llm-generation">
+<span class="md-ellipsis">
+      
+        4. LLM Generation
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#2-document-indexing-flow">
+<span class="md-ellipsis">
+      
+        2. Document Indexing Flow
+      
+    </span>
+</a>
+<nav aria-label="2. Document Indexing Flow" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#high-level-flow_1">
+<span class="md-ellipsis">
+      
+        High-Level Flow
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#detailed-sequence_1">
+<span class="md-ellipsis">
+      
+        Detailed Sequence
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#chunking-example">
+<span class="md-ellipsis">
+      
+        Chunking Example
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#3-health-check-flow">
+<span class="md-ellipsis">
+      
+        3. Health Check Flow
+      
+    </span>
+</a>
+<nav aria-label="3. Health Check Flow" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#sequence-diagram">
+<span class="md-ellipsis">
+      
+        Sequence Diagram
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#response-example">
+<span class="md-ellipsis">
+      
+        Response Example
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#4-streaming-response-flow">
+<span class="md-ellipsis">
+      
+        4. Streaming Response Flow
+      
+    </span>
+</a>
+<nav aria-label="4. Streaming Response Flow" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#sequence-diagram_1">
+<span class="md-ellipsis">
+      
+        Sequence Diagram
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#server-sent-events-format">
+<span class="md-ellipsis">
+      
+        Server-Sent Events Format
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#error-handling-flows">
+<span class="md-ellipsis">
+      
+        Error Handling Flows
+      
+    </span>
+</a>
+<nav aria-label="Error Handling Flows" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#no-context-found">
+<span class="md-ellipsis">
+      
+        No Context Found
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#ollama-unavailable">
+<span class="md-ellipsis">
+      
+        Ollama Unavailable
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#performance-metrics">
+<span class="md-ellipsis">
+      
+        Performance Metrics
+      
+    </span>
+</a>
+<nav aria-label="Performance Metrics" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#typical-latencies">
+<span class="md-ellipsis">
+      
+        Typical Latencies
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#optimization-opportunities">
+<span class="md-ellipsis">
+      
+        Optimization Opportunities
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#data-persistence">
+<span class="md-ellipsis">
+      
+        Data Persistence
+      
+    </span>
+</a>
+<nav aria-label="Data Persistence" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#chromadb-storage">
+<span class="md-ellipsis">
+      
+        ChromaDB Storage
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#next-steps">
+<span class="md-ellipsis">
+      
+        Next Steps
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<h1 id="data-flow">Data Flow<a class="headerlink" href="#data-flow" title="Permanent link">¶</a></h1>
+<p>This document details the data flow through the RAG system with comprehensive sequence diagrams.</p>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">¶</a></h2>
+<p>The system has four primary data flows:</p>
+<ol>
+<li><strong>Question Answering</strong> - User asks a question</li>
+<li><strong>Document Indexing</strong> - Admin reindexes knowledge base</li>
+<li><strong>Health Monitoring</strong> - System status checks</li>
+<li><strong>Streaming Responses</strong> - Real-time answer generation</li>
+</ol>
+<hr/>
+<h2 id="1-question-answering-flow">1. Question Answering Flow<a class="headerlink" href="#1-question-answering-flow" title="Permanent link">¶</a></h2>
+<h3 id="high-level-flow">High-Level Flow<a class="headerlink" href="#high-level-flow" title="Permanent link">¶</a></h3>
+<div class="mermaid">graph LR
+    A[User Question] --&gt; B[Embed Query]
+    B --&gt; C[Vector Search]
+    C --&gt; D[Retrieve Context]
+    D --&gt; E[Build Prompt]
+    E --&gt; F[Generate Answer]
+    F --&gt; G[Return Response]
+
+    style A fill:#e1f5ff
+    style C fill:#e8f5e9
+    style F fill:#fce4ec
+    style G fill:#fff3e0
+</div>
+<h3 id="detailed-sequence">Detailed Sequence<a class="headerlink" href="#detailed-sequence" title="Permanent link">¶</a></h3>
+<div class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant Frontend as Streamlit Frontend
+    participant API as FastAPI Server
+    participant Router
+    participant Endpoint as Questions Endpoint
+    participant RAG as RAG Pipeline
+    participant VDB as Vector DB Service
+    participant Embedder as SentenceTransformer
+    participant ChromaDB
+    participant PM as Prompt Manager
+    participant LLM as LLM Service
+    participant Ollama
+
+    User-&gt;&gt;Frontend: Enter question
+    activate Frontend
+
+    Frontend-&gt;&gt;Frontend: Validate input
+    Frontend-&gt;&gt;API: POST /api/v1/ask
+    activate API
+
+    API-&gt;&gt;Router: Route to endpoint
+    Router-&gt;&gt;Endpoint: Handle request
+    activate Endpoint
+
+    Endpoint-&gt;&gt;RAG: answer_question(q)
+    activate RAG
+
+    Note over RAG,VDB: Step 1: Retrieval
+    RAG-&gt;&gt;VDB: search_documents(query, top_k=5)
+    activate VDB
+
+    VDB-&gt;&gt;Embedder: encode(query)
+    activate Embedder
+    Embedder-&gt;&gt;Embedder: Forward pass
+    Embedder--&gt;&gt;VDB: embedding [384]
+    deactivate Embedder
+
+    VDB-&gt;&gt;ChromaDB: query(embedding, n_results=5)
+    activate ChromaDB
+    ChromaDB-&gt;&gt;ChromaDB: Cosine similarity search
+    ChromaDB--&gt;&gt;VDB: top_5_chunks
+    deactivate ChromaDB
+
+    VDB-&gt;&gt;VDB: Add metadata &amp; scores
+    VDB--&gt;&gt;RAG: List[chunks with scores]
+    deactivate VDB
+
+    alt Context Found
+        Note over RAG,PM: Step 2: Prompt Building
+        RAG-&gt;&gt;PM: build_prompt(chunks, question)
+        activate PM
+
+        PM-&gt;&gt;PM: Load system prompt
+        PM-&gt;&gt;PM: Format context
+        PM-&gt;&gt;PM: Apply RAG template
+        PM--&gt;&gt;RAG: complete_prompt
+        deactivate PM
+
+        Note over RAG,Ollama: Step 3: Generation
+        RAG-&gt;&gt;LLM: generate(prompt, temp=0.3)
+        activate LLM
+
+        LLM-&gt;&gt;Ollama: POST /api/generate
+        activate Ollama
+        Ollama-&gt;&gt;Ollama: LLM inference
+        Ollama--&gt;&gt;LLM: generated_text
+        deactivate Ollama
+
+        LLM--&gt;&gt;RAG: answer_text
+        deactivate LLM
+
+        RAG-&gt;&gt;RAG: Prepare response with sources
+        RAG--&gt;&gt;Endpoint: {answer, sources, model}
+
+    else No Context
+        RAG-&gt;&gt;PM: get_no_context_message(question)
+        PM--&gt;&gt;RAG: fallback_message
+        RAG--&gt;&gt;Endpoint: {answer: fallback, sources: []}
+    end
+
+    deactivate RAG
+
+    Endpoint-&gt;&gt;Endpoint: Format API response
+    Endpoint--&gt;&gt;Router: QuestionResponse
+    deactivate Endpoint
+
+    Router--&gt;&gt;API: JSON response
+    API--&gt;&gt;Frontend: HTTP 200 OK
+    deactivate API
+
+    Frontend-&gt;&gt;Frontend: Parse response
+    Frontend-&gt;&gt;Frontend: Display answer
+    Frontend-&gt;&gt;Frontend: Show sources
+    Frontend--&gt;&gt;User: Rendered answer with citations
+    deactivate Frontend
+</div>
+<h3 id="data-transformations">Data Transformations<a class="headerlink" href="#data-transformations" title="Permanent link">¶</a></h3>
+<h4 id="1-query-embedding">1. Query Embedding<a class="headerlink" href="#1-query-embedding" title="Permanent link">¶</a></h4>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="n">Input</span><span class="p">:</span> <span class="s2">"What is Basecamp's vacation policy?"</span>
+<a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a>
+<a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="c1"># Tokenization</span>
+<a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"what"</span><span class="p">,</span> <span class="s2">"is"</span><span class="p">,</span> <span class="s2">"basecamp"</span><span class="p">,</span> <span class="s2">"'s"</span><span class="p">,</span> <span class="s2">"vacation"</span><span class="p">,</span> <span class="s2">"policy"</span><span class="p">,</span> <span class="s2">"?"</span><span class="p">]</span>
+<a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a>
+<a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="c1"># Encoding (sentence-transformers)</span>
+<a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="n">embedding</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+<a href="#__codelineno-0-8" id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="c1"># Output: [0.023, -0.156, 0.891, ..., -0.034]  # 384 dimensions</span>
+</code></pre></div>
+<h4 id="2-vector-search">2. Vector Search<a class="headerlink" href="#2-vector-search" title="Permanent link">¶</a></h4>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="c1"># Cosine similarity</span>
+<a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="k">for</span> <span class="n">doc_embedding</span> <span class="ow">in</span> <span class="n">database</span><span class="p">:</span>
+<a href="#__codelineno-1-3" id="__codelineno-1-3" name="__codelineno-1-3"></a>    <span class="n">similarity</span> <span class="o">=</span> <span class="n">cosine_similarity</span><span class="p">(</span><span class="n">query_embedding</span><span class="p">,</span> <span class="n">doc_embedding</span><span class="p">)</span>
+<a href="#__codelineno-1-4" id="__codelineno-1-4" name="__codelineno-1-4"></a>
+<a href="#__codelineno-1-5" id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="c1"># Top-K selection</span>
+<a href="#__codelineno-1-6" id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="n">top_5</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">similarities</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)[:</span><span class="mi">5</span><span class="p">]</span>
+<a href="#__codelineno-1-7" id="__codelineno-1-7" name="__codelineno-1-7"></a>
+<a href="#__codelineno-1-8" id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="c1"># Example results:</span>
+<a href="#__codelineno-1-9" id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="p">[</span>
+<a href="#__codelineno-1-10" id="__codelineno-1-10" name="__codelineno-1-10"></a>    <span class="p">{</span>
+<a href="#__codelineno-1-11" id="__codelineno-1-11" name="__codelineno-1-11"></a>        <span class="s2">"text"</span><span class="p">:</span> <span class="s2">"Basecamp offers unlimited vacation..."</span><span class="p">,</span>
+<a href="#__codelineno-1-12" id="__codelineno-1-12" name="__codelineno-1-12"></a>        <span class="s2">"score"</span><span class="p">:</span> <span class="mf">0.92</span><span class="p">,</span>
+<a href="#__codelineno-1-13" id="__codelineno-1-13" name="__codelineno-1-13"></a>        <span class="s2">"metadata"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"source"</span><span class="p">:</span> <span class="s2">"benefits.md"</span><span class="p">,</span> <span class="s2">"header"</span><span class="p">:</span> <span class="s2">"Vacation Policy"</span><span class="p">}</span>
+<a href="#__codelineno-1-14" id="__codelineno-1-14" name="__codelineno-1-14"></a>    <span class="p">},</span>
+<a href="#__codelineno-1-15" id="__codelineno-1-15" name="__codelineno-1-15"></a>    <span class="p">{</span>
+<a href="#__codelineno-1-16" id="__codelineno-1-16" name="__codelineno-1-16"></a>        <span class="s2">"text"</span><span class="p">:</span> <span class="s2">"Time off should be coordinated with your team..."</span><span class="p">,</span>
+<a href="#__codelineno-1-17" id="__codelineno-1-17" name="__codelineno-1-17"></a>        <span class="s2">"score"</span><span class="p">:</span> <span class="mf">0.87</span><span class="p">,</span>
+<a href="#__codelineno-1-18" id="__codelineno-1-18" name="__codelineno-1-18"></a>        <span class="s2">"metadata"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"source"</span><span class="p">:</span> <span class="s2">"how-we-work.md"</span><span class="p">,</span> <span class="s2">"header"</span><span class="p">:</span> <span class="s2">"Taking Time Off"</span><span class="p">}</span>
+<a href="#__codelineno-1-19" id="__codelineno-1-19" name="__codelineno-1-19"></a>    <span class="p">},</span>
+<a href="#__codelineno-1-20" id="__codelineno-1-20" name="__codelineno-1-20"></a>    <span class="c1"># ... 3 more</span>
+<a href="#__codelineno-1-21" id="__codelineno-1-21" name="__codelineno-1-21"></a><span class="p">]</span>
+</code></pre></div>
+<h4 id="3-prompt-construction">3. Prompt Construction<a class="headerlink" href="#3-prompt-construction" title="Permanent link">¶</a></h4>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="n">system_prompt</span> <span class="o">=</span> <span class="s2">"""</span>
+<a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="s2">You are an AI assistant specialized in answering questions</span>
+<a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="s2">about the Basecamp Employee Handbook.</span>
+<a href="#__codelineno-2-4" id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="s2">"""</span>
+<a href="#__codelineno-2-5" id="__codelineno-2-5" name="__codelineno-2-5"></a>
+<a href="#__codelineno-2-6" id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="n">context</span> <span class="o">=</span> <span class="s2">"""</span>
+<a href="#__codelineno-2-7" id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="s2">Context from handbook:</span>
+<a href="#__codelineno-2-8" id="__codelineno-2-8" name="__codelineno-2-8"></a>
+<a href="#__codelineno-2-9" id="__codelineno-2-9" name="__codelineno-2-9"></a><span class="s2">[1] Basecamp offers unlimited vacation...</span>
+<a href="#__codelineno-2-10" id="__codelineno-2-10" name="__codelineno-2-10"></a><span class="s2">Source: benefits.md (Score: 0.92)</span>
+<a href="#__codelineno-2-11" id="__codelineno-2-11" name="__codelineno-2-11"></a>
+<a href="#__codelineno-2-12" id="__codelineno-2-12" name="__codelineno-2-12"></a><span class="s2">[2] Time off should be coordinated with your team...</span>
+<a href="#__codelineno-2-13" id="__codelineno-2-13" name="__codelineno-2-13"></a><span class="s2">Source: how-we-work.md (Score: 0.87)</span>
+<a href="#__codelineno-2-14" id="__codelineno-2-14" name="__codelineno-2-14"></a>
+<a href="#__codelineno-2-15" id="__codelineno-2-15" name="__codelineno-2-15"></a><span class="s2">...</span>
+<a href="#__codelineno-2-16" id="__codelineno-2-16" name="__codelineno-2-16"></a><span class="s2">"""</span>
+<a href="#__codelineno-2-17" id="__codelineno-2-17" name="__codelineno-2-17"></a>
+<a href="#__codelineno-2-18" id="__codelineno-2-18" name="__codelineno-2-18"></a><span class="n">rag_template</span> <span class="o">=</span> <span class="s2">"""</span>
+<a href="#__codelineno-2-19" id="__codelineno-2-19" name="__codelineno-2-19"></a><span class="si">{context}</span>
+<a href="#__codelineno-2-20" id="__codelineno-2-20" name="__codelineno-2-20"></a>
+<a href="#__codelineno-2-21" id="__codelineno-2-21" name="__codelineno-2-21"></a><span class="s2">Question: </span><span class="si">{question}</span>
+<a href="#__codelineno-2-22" id="__codelineno-2-22" name="__codelineno-2-22"></a>
+<a href="#__codelineno-2-23" id="__codelineno-2-23" name="__codelineno-2-23"></a><span class="s2">Answer based on the context above:</span>
+<a href="#__codelineno-2-24" id="__codelineno-2-24" name="__codelineno-2-24"></a><span class="s2">"""</span>
+<a href="#__codelineno-2-25" id="__codelineno-2-25" name="__codelineno-2-25"></a>
+<a href="#__codelineno-2-26" id="__codelineno-2-26" name="__codelineno-2-26"></a><span class="c1"># Final prompt</span>
+<a href="#__codelineno-2-27" id="__codelineno-2-27" name="__codelineno-2-27"></a><span class="n">final_prompt</span> <span class="o">=</span> <span class="n">system_prompt</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n\n</span><span class="s2">"</span> <span class="o">+</span> <span class="n">rag_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+<a href="#__codelineno-2-28" id="__codelineno-2-28" name="__codelineno-2-28"></a>    <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">,</span>
+<a href="#__codelineno-2-29" id="__codelineno-2-29" name="__codelineno-2-29"></a>    <span class="n">question</span><span class="o">=</span><span class="s2">"What is Basecamp's vacation policy?"</span>
+<a href="#__codelineno-2-30" id="__codelineno-2-30" name="__codelineno-2-30"></a><span class="p">)</span>
+</code></pre></div>
+<h4 id="4-llm-generation">4. LLM Generation<a class="headerlink" href="#4-llm-generation" title="Permanent link">¶</a></h4>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="c1"># Request to Ollama</span>
+<a href="#__codelineno-3-2" id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="p">{</span>
+<a href="#__codelineno-3-3" id="__codelineno-3-3" name="__codelineno-3-3"></a>    <span class="s2">"model"</span><span class="p">:</span> <span class="s2">"llama3.2:3b"</span><span class="p">,</span>
+<a href="#__codelineno-3-4" id="__codelineno-3-4" name="__codelineno-3-4"></a>    <span class="s2">"prompt"</span><span class="p">:</span> <span class="n">final_prompt</span><span class="p">,</span>
+<a href="#__codelineno-3-5" id="__codelineno-3-5" name="__codelineno-3-5"></a>    <span class="s2">"temperature"</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+<a href="#__codelineno-3-6" id="__codelineno-3-6" name="__codelineno-3-6"></a>    <span class="s2">"stream"</span><span class="p">:</span> <span class="n">false</span>
+<a href="#__codelineno-3-7" id="__codelineno-3-7" name="__codelineno-3-7"></a><span class="p">}</span>
+<a href="#__codelineno-3-8" id="__codelineno-3-8" name="__codelineno-3-8"></a>
+<a href="#__codelineno-3-9" id="__codelineno-3-9" name="__codelineno-3-9"></a><span class="c1"># Response</span>
+<a href="#__codelineno-3-10" id="__codelineno-3-10" name="__codelineno-3-10"></a><span class="p">{</span>
+<a href="#__codelineno-3-11" id="__codelineno-3-11" name="__codelineno-3-11"></a>    <span class="s2">"response"</span><span class="p">:</span> <span class="s2">"Basecamp offers unlimited vacation time to all employees..."</span>
+<a href="#__codelineno-3-12" id="__codelineno-3-12" name="__codelineno-3-12"></a><span class="p">}</span>
+</code></pre></div>
+<hr/>
+<h2 id="2-document-indexing-flow">2. Document Indexing Flow<a class="headerlink" href="#2-document-indexing-flow" title="Permanent link">¶</a></h2>
+<h3 id="high-level-flow_1">High-Level Flow<a class="headerlink" href="#high-level-flow_1" title="Permanent link">¶</a></h3>
+<div class="mermaid">graph LR
+    A[Admin Trigger] --&gt; B[Read Files]
+    B --&gt; C[Chunk Documents]
+    C --&gt; D[Generate Embeddings]
+    D --&gt; E[Store in ChromaDB]
+    E --&gt; F[Return Stats]
+
+    style A fill:#fff3e0
+    style C fill:#e8f5e9
+    style E fill:#e0f2f1
+</div>
+<h3 id="detailed-sequence_1">Detailed Sequence<a class="headerlink" href="#detailed-sequence_1" title="Permanent link">¶</a></h3>
+<div class="mermaid">sequenceDiagram
+    autonumber
+    participant API as FastAPI
+    participant VDB as Vector DB Service
+    participant FS as File System
+    participant Splitter as Text Splitter
+    participant Embedder as SentenceTransformer
+    participant ChromaDB
+    participant DBConn as DB Connection
+
+    Note over API,DBConn: Indexing happens at backend startup
+    API-&gt;&gt;VDB: index_directory(path)
+    activate VDB
+
+    VDB-&gt;&gt;DBConn: reset_collection()
+    activate DBConn
+    DBConn-&gt;&gt;ChromaDB: Delete collection
+    ChromaDB--&gt;&gt;DBConn: OK
+    DBConn-&gt;&gt;ChromaDB: Create collection
+    ChromaDB--&gt;&gt;DBConn: Collection created
+    deactivate DBConn
+
+    VDB-&gt;&gt;FS: List *.md files
+    FS--&gt;&gt;VDB: [file1.md, file2.md, ...]
+
+    loop For each markdown file
+        VDB-&gt;&gt;FS: Read file content
+        FS--&gt;&gt;VDB: content
+
+        VDB-&gt;&gt;Splitter: chunk_document_by_headers(content)
+        activate Splitter
+
+        Splitter-&gt;&gt;Splitter: Split by headers (#, ##, ###)
+        Splitter-&gt;&gt;Splitter: Apply recursive splitting
+        Splitter--&gt;&gt;VDB: chunks[]
+        deactivate Splitter
+
+        loop For each chunk
+            VDB-&gt;&gt;Embedder: encode(chunk_text)
+            activate Embedder
+            Embedder-&gt;&gt;Embedder: Forward pass through model
+            Embedder--&gt;&gt;VDB: embedding [384]
+            deactivate Embedder
+
+            VDB-&gt;&gt;VDB: Prepare metadata
+            Note over VDB: metadata = {<br/>  source: filename,<br/>  headers: {...},<br/>  chunk_id: N<br/>}
+
+            VDB-&gt;&gt;ChromaDB: add(chunk, embedding, metadata)
+            ChromaDB-&gt;&gt;ChromaDB: Store vector + metadata
+            ChromaDB--&gt;&gt;VDB: OK
+        end
+    end
+
+    VDB-&gt;&gt;VDB: Count total chunks
+    VDB--&gt;&gt;API: indexed_count
+    deactivate VDB
+
+    API-&gt;&gt;API: Log indexing results
+    Note over API: Ready to serve queries
+    deactivate API
+</div>
+<h3 id="chunking-example">Chunking Example<a class="headerlink" href="#chunking-example" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-4-1" id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="c1"># Input document</span>
+<a href="#__codelineno-4-2" id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="n">content</span> <span class="o">=</span> <span class="s2">"""</span>
+<a href="#__codelineno-4-3" id="__codelineno-4-3" name="__codelineno-4-3"></a><span class="s2"># Benefits</span>
+<a href="#__codelineno-4-4" id="__codelineno-4-4" name="__codelineno-4-4"></a>
+<a href="#__codelineno-4-5" id="__codelineno-4-5" name="__codelineno-4-5"></a><span class="s2">## Health Insurance</span>
+<a href="#__codelineno-4-6" id="__codelineno-4-6" name="__codelineno-4-6"></a>
+<a href="#__codelineno-4-7" id="__codelineno-4-7" name="__codelineno-4-7"></a><span class="s2">We offer comprehensive health insurance to all full-time employees.</span>
+<a href="#__codelineno-4-8" id="__codelineno-4-8" name="__codelineno-4-8"></a>
+<a href="#__codelineno-4-9" id="__codelineno-4-9" name="__codelineno-4-9"></a><span class="s2">### Medical Coverage</span>
+<a href="#__codelineno-4-10" id="__codelineno-4-10" name="__codelineno-4-10"></a><span class="s2">Medical coverage includes doctor visits, hospital stays...</span>
+<a href="#__codelineno-4-11" id="__codelineno-4-11" name="__codelineno-4-11"></a>
+<a href="#__codelineno-4-12" id="__codelineno-4-12" name="__codelineno-4-12"></a><span class="s2">### Dental Coverage</span>
+<a href="#__codelineno-4-13" id="__codelineno-4-13" name="__codelineno-4-13"></a><span class="s2">Dental coverage includes preventive care...</span>
+<a href="#__codelineno-4-14" id="__codelineno-4-14" name="__codelineno-4-14"></a>
+<a href="#__codelineno-4-15" id="__codelineno-4-15" name="__codelineno-4-15"></a><span class="s2">## 401(k) Plan</span>
+<a href="#__codelineno-4-16" id="__codelineno-4-16" name="__codelineno-4-16"></a>
+<a href="#__codelineno-4-17" id="__codelineno-4-17" name="__codelineno-4-17"></a><span class="s2">Basecamp matches 401(k) contributions up to 6%...</span>
+<a href="#__codelineno-4-18" id="__codelineno-4-18" name="__codelineno-4-18"></a><span class="s2">"""</span>
+<a href="#__codelineno-4-19" id="__codelineno-4-19" name="__codelineno-4-19"></a>
+<a href="#__codelineno-4-20" id="__codelineno-4-20" name="__codelineno-4-20"></a><span class="c1"># Step 1: Header-based split</span>
+<a href="#__codelineno-4-21" id="__codelineno-4-21" name="__codelineno-4-21"></a><span class="n">header_chunks</span> <span class="o">=</span> <span class="p">[</span>
+<a href="#__codelineno-4-22" id="__codelineno-4-22" name="__codelineno-4-22"></a>    <span class="p">{</span>
+<a href="#__codelineno-4-23" id="__codelineno-4-23" name="__codelineno-4-23"></a>        <span class="s2">"text"</span><span class="p">:</span> <span class="s2">"We offer comprehensive health insurance..."</span><span class="p">,</span>
+<a href="#__codelineno-4-24" id="__codelineno-4-24" name="__codelineno-4-24"></a>        <span class="s2">"metadata"</span><span class="p">:</span> <span class="p">{</span>
+<a href="#__codelineno-4-25" id="__codelineno-4-25" name="__codelineno-4-25"></a>            <span class="s2">"Header 1"</span><span class="p">:</span> <span class="s2">"Benefits"</span><span class="p">,</span>
+<a href="#__codelineno-4-26" id="__codelineno-4-26" name="__codelineno-4-26"></a>            <span class="s2">"Header 2"</span><span class="p">:</span> <span class="s2">"Health Insurance"</span>
+<a href="#__codelineno-4-27" id="__codelineno-4-27" name="__codelineno-4-27"></a>        <span class="p">}</span>
+<a href="#__codelineno-4-28" id="__codelineno-4-28" name="__codelineno-4-28"></a>    <span class="p">},</span>
+<a href="#__codelineno-4-29" id="__codelineno-4-29" name="__codelineno-4-29"></a>    <span class="p">{</span>
+<a href="#__codelineno-4-30" id="__codelineno-4-30" name="__codelineno-4-30"></a>        <span class="s2">"text"</span><span class="p">:</span> <span class="s2">"Medical coverage includes doctor visits..."</span><span class="p">,</span>
+<a href="#__codelineno-4-31" id="__codelineno-4-31" name="__codelineno-4-31"></a>        <span class="s2">"metadata"</span><span class="p">:</span> <span class="p">{</span>
+<a href="#__codelineno-4-32" id="__codelineno-4-32" name="__codelineno-4-32"></a>            <span class="s2">"Header 1"</span><span class="p">:</span> <span class="s2">"Benefits"</span><span class="p">,</span>
+<a href="#__codelineno-4-33" id="__codelineno-4-33" name="__codelineno-4-33"></a>            <span class="s2">"Header 2"</span><span class="p">:</span> <span class="s2">"Health Insurance"</span><span class="p">,</span>
+<a href="#__codelineno-4-34" id="__codelineno-4-34" name="__codelineno-4-34"></a>            <span class="s2">"Header 3"</span><span class="p">:</span> <span class="s2">"Medical Coverage"</span>
+<a href="#__codelineno-4-35" id="__codelineno-4-35" name="__codelineno-4-35"></a>        <span class="p">}</span>
+<a href="#__codelineno-4-36" id="__codelineno-4-36" name="__codelineno-4-36"></a>    <span class="p">},</span>
+<a href="#__codelineno-4-37" id="__codelineno-4-37" name="__codelineno-4-37"></a>    <span class="c1"># ... more chunks</span>
+<a href="#__codelineno-4-38" id="__codelineno-4-38" name="__codelineno-4-38"></a><span class="p">]</span>
+<a href="#__codelineno-4-39" id="__codelineno-4-39" name="__codelineno-4-39"></a>
+<a href="#__codelineno-4-40" id="__codelineno-4-40" name="__codelineno-4-40"></a><span class="c1"># Step 2: If any chunk &gt; 800 chars, recursive split</span>
+<a href="#__codelineno-4-41" id="__codelineno-4-41" name="__codelineno-4-41"></a><span class="c1"># (maintains metadata from header split)</span>
+<a href="#__codelineno-4-42" id="__codelineno-4-42" name="__codelineno-4-42"></a>
+<a href="#__codelineno-4-43" id="__codelineno-4-43" name="__codelineno-4-43"></a><span class="c1"># Step 3: Generate embeddings</span>
+<a href="#__codelineno-4-44" id="__codelineno-4-44" name="__codelineno-4-44"></a><span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">header_chunks</span><span class="p">:</span>
+<a href="#__codelineno-4-45" id="__codelineno-4-45" name="__codelineno-4-45"></a>    <span class="n">embedding</span> <span class="o">=</span> <span class="n">embedder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">chunk</span><span class="p">[</span><span class="s2">"text"</span><span class="p">])</span>
+<a href="#__codelineno-4-46" id="__codelineno-4-46" name="__codelineno-4-46"></a>    <span class="n">chromadb</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+<a href="#__codelineno-4-47" id="__codelineno-4-47" name="__codelineno-4-47"></a>        <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="n">chunk_id</span><span class="p">],</span>
+<a href="#__codelineno-4-48" id="__codelineno-4-48" name="__codelineno-4-48"></a>        <span class="n">embeddings</span><span class="o">=</span><span class="p">[</span><span class="n">embedding</span><span class="p">],</span>
+<a href="#__codelineno-4-49" id="__codelineno-4-49" name="__codelineno-4-49"></a>        <span class="n">documents</span><span class="o">=</span><span class="p">[</span><span class="n">chunk</span><span class="p">[</span><span class="s2">"text"</span><span class="p">]],</span>
+<a href="#__codelineno-4-50" id="__codelineno-4-50" name="__codelineno-4-50"></a>        <span class="n">metadatas</span><span class="o">=</span><span class="p">[</span><span class="n">chunk</span><span class="p">[</span><span class="s2">"metadata"</span><span class="p">]]</span>
+<a href="#__codelineno-4-51" id="__codelineno-4-51" name="__codelineno-4-51"></a>    <span class="p">)</span>
+</code></pre></div>
+<hr/>
+<h2 id="3-health-check-flow">3. Health Check Flow<a class="headerlink" href="#3-health-check-flow" title="Permanent link">¶</a></h2>
+<h3 id="sequence-diagram">Sequence Diagram<a class="headerlink" href="#sequence-diagram" title="Permanent link">¶</a></h3>
+<div class="mermaid">sequenceDiagram
+    participant Client
+    participant API as FastAPI
+    participant Endpoint as Health Endpoint
+    participant VDB as Vector DB Service
+    participant LLM as LLM Service
+    participant Ollama
+    participant ChromaDB
+
+    Client-&gt;&gt;API: GET /api/v1/health
+    activate API
+
+    API-&gt;&gt;Endpoint: Handle health check
+    activate Endpoint
+
+    par Check Ollama
+        Endpoint-&gt;&gt;LLM: check_availability()
+        activate LLM
+        LLM-&gt;&gt;Ollama: GET /api/version
+        Ollama--&gt;&gt;LLM: {version: "0.1.20"}
+        LLM--&gt;&gt;Endpoint: ollama_available=True
+        deactivate LLM
+    and Check Database
+        Endpoint-&gt;&gt;VDB: get_document_count()
+        activate VDB
+        VDB-&gt;&gt;ChromaDB: collection.count()
+        ChromaDB--&gt;&gt;VDB: 150
+        VDB--&gt;&gt;Endpoint: doc_count=150
+        deactivate VDB
+    end
+
+    Endpoint-&gt;&gt;Endpoint: Aggregate status
+    Endpoint--&gt;&gt;API: HealthResponse
+    deactivate Endpoint
+
+    API--&gt;&gt;Client: HTTP 200 OK
+    deactivate API
+</div>
+<h3 id="response-example">Response Example<a class="headerlink" href="#response-example" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-5-1" id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="p">{</span>
+<a href="#__codelineno-5-2" id="__codelineno-5-2" name="__codelineno-5-2"></a><span class="w">    </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"healthy"</span><span class="p">,</span>
+<a href="#__codelineno-5-3" id="__codelineno-5-3" name="__codelineno-5-3"></a><span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2.0.0"</span><span class="p">,</span>
+<a href="#__codelineno-5-4" id="__codelineno-5-4" name="__codelineno-5-4"></a><span class="w">    </span><span class="nt">"timestamp"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-01-20T10:30:45.123Z"</span><span class="p">,</span>
+<a href="#__codelineno-5-5" id="__codelineno-5-5" name="__codelineno-5-5"></a><span class="w">    </span><span class="nt">"ollama_available"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<a href="#__codelineno-5-6" id="__codelineno-5-6" name="__codelineno-5-6"></a><span class="w">    </span><span class="nt">"ollama_model"</span><span class="p">:</span><span class="w"> </span><span class="s2">"llama3.2:3b"</span><span class="p">,</span>
+<a href="#__codelineno-5-7" id="__codelineno-5-7" name="__codelineno-5-7"></a><span class="w">    </span><span class="nt">"documents_indexed"</span><span class="p">:</span><span class="w"> </span><span class="mi">150</span><span class="p">,</span>
+<a href="#__codelineno-5-8" id="__codelineno-5-8" name="__codelineno-5-8"></a><span class="w">    </span><span class="nt">"collections"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"basecamp_handbook"</span><span class="p">],</span>
+<a href="#__codelineno-5-9" id="__codelineno-5-9" name="__codelineno-5-9"></a><span class="w">    </span><span class="nt">"uptime_seconds"</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span>
+<a href="#__codelineno-5-10" id="__codelineno-5-10" name="__codelineno-5-10"></a><span class="p">}</span>
+</code></pre></div>
+<hr/>
+<h2 id="4-streaming-response-flow">4. Streaming Response Flow<a class="headerlink" href="#4-streaming-response-flow" title="Permanent link">¶</a></h2>
+<h3 id="sequence-diagram_1">Sequence Diagram<a class="headerlink" href="#sequence-diagram_1" title="Permanent link">¶</a></h3>
+<div class="mermaid">sequenceDiagram
+    participant User
+    participant Frontend
+    participant API as FastAPI
+    participant Endpoint
+    participant RAG as RAG Pipeline
+    participant VDB
+    participant LLM
+    participant Ollama
+
+    User-&gt;&gt;Frontend: Click "Ask" with streaming enabled
+    activate Frontend
+
+    Frontend-&gt;&gt;API: POST /api/v1/ask/stream
+    Note over Frontend,API: Connection: keep-alive<br/>Accept: text/event-stream
+    activate API
+
+    API-&gt;&gt;Endpoint: Handle streaming request
+    activate Endpoint
+
+    Endpoint-&gt;&gt;RAG: answer_question_stream(q)
+    activate RAG
+
+    RAG-&gt;&gt;VDB: search_documents(q)
+    VDB--&gt;&gt;RAG: context_chunks
+
+    RAG-&gt;&gt;RAG: build_prompt(chunks)
+
+    RAG-&gt;&gt;LLM: generate_stream(prompt)
+    activate LLM
+
+    LLM-&gt;&gt;Ollama: POST /api/generate (stream=true)
+    activate Ollama
+
+    loop Token generation
+        Ollama-&gt;&gt;Ollama: Generate next token
+        Ollama--&gt;&gt;LLM: {"response": "token"}
+        LLM--&gt;&gt;RAG: "token"
+        RAG--&gt;&gt;Endpoint: "token"
+        Endpoint--&gt;&gt;API: "token"
+        API--&gt;&gt;Frontend: data: token\n\n
+        Frontend-&gt;&gt;Frontend: Append to display
+        Frontend--&gt;&gt;User: Update UI
+    end
+
+    Ollama--&gt;&gt;LLM: {"done": true}
+    deactivate Ollama
+
+    LLM--&gt;&gt;RAG: Stream complete
+    deactivate LLM
+
+    RAG--&gt;&gt;Endpoint: Done
+    deactivate RAG
+
+    Endpoint--&gt;&gt;API: Close stream
+    deactivate Endpoint
+
+    API--&gt;&gt;Frontend: Connection closed
+    deactivate API
+
+    Frontend-&gt;&gt;Frontend: Show sources
+    Frontend--&gt;&gt;User: Complete answer displayed
+    deactivate Frontend
+</div>
+<h3 id="server-sent-events-format">Server-Sent Events Format<a class="headerlink" href="#server-sent-events-format" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-6-1" id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<a href="#__codelineno-6-2" id="__codelineno-6-2" name="__codelineno-6-2"></a><span class="na">Content-Type</span><span class="o">:</span> <span class="l">text/event-stream</span>
+<a href="#__codelineno-6-3" id="__codelineno-6-3" name="__codelineno-6-3"></a><span class="na">Cache-Control</span><span class="o">:</span> <span class="l">no-cache</span>
+<a href="#__codelineno-6-4" id="__codelineno-6-4" name="__codelineno-6-4"></a><span class="na">Connection</span><span class="o">:</span> <span class="l">keep-alive</span>
+<a href="#__codelineno-6-5" id="__codelineno-6-5" name="__codelineno-6-5"></a>
+<a href="#__codelineno-6-6" id="__codelineno-6-6" name="__codelineno-6-6"></a>data: Basecamp
+<a href="#__codelineno-6-7" id="__codelineno-6-7" name="__codelineno-6-7"></a>
+<a href="#__codelineno-6-8" id="__codelineno-6-8" name="__codelineno-6-8"></a>data:  offers
+<a href="#__codelineno-6-9" id="__codelineno-6-9" name="__codelineno-6-9"></a>
+<a href="#__codelineno-6-10" id="__codelineno-6-10" name="__codelineno-6-10"></a>data:  unlimited
+<a href="#__codelineno-6-11" id="__codelineno-6-11" name="__codelineno-6-11"></a>
+<a href="#__codelineno-6-12" id="__codelineno-6-12" name="__codelineno-6-12"></a>data:  vacation
+<a href="#__codelineno-6-13" id="__codelineno-6-13" name="__codelineno-6-13"></a>
+<a href="#__codelineno-6-14" id="__codelineno-6-14" name="__codelineno-6-14"></a>data:  time
+<a href="#__codelineno-6-15" id="__codelineno-6-15" name="__codelineno-6-15"></a>
+<a href="#__codelineno-6-16" id="__codelineno-6-16" name="__codelineno-6-16"></a>data:  to
+<a href="#__codelineno-6-17" id="__codelineno-6-17" name="__codelineno-6-17"></a>
+<a href="#__codelineno-6-18" id="__codelineno-6-18" name="__codelineno-6-18"></a>data:  all
+<a href="#__codelineno-6-19" id="__codelineno-6-19" name="__codelineno-6-19"></a>
+<a href="#__codelineno-6-20" id="__codelineno-6-20" name="__codelineno-6-20"></a>data:  employees
+<a href="#__codelineno-6-21" id="__codelineno-6-21" name="__codelineno-6-21"></a>
+<a href="#__codelineno-6-22" id="__codelineno-6-22" name="__codelineno-6-22"></a>data: .
+<a href="#__codelineno-6-23" id="__codelineno-6-23" name="__codelineno-6-23"></a>
+<a href="#__codelineno-6-24" id="__codelineno-6-24" name="__codelineno-6-24"></a>[DONE]
+</code></pre></div>
+<hr/>
+<h2 id="error-handling-flows">Error Handling Flows<a class="headerlink" href="#error-handling-flows" title="Permanent link">¶</a></h2>
+<h3 id="no-context-found">No Context Found<a class="headerlink" href="#no-context-found" title="Permanent link">¶</a></h3>
+<div class="mermaid">sequenceDiagram
+    participant User
+    participant API
+    participant RAG
+    participant VDB
+    participant PM as Prompt Manager
+
+    User-&gt;&gt;API: "What is the moon landing date?"
+    API-&gt;&gt;RAG: answer_question(q)
+    RAG-&gt;&gt;VDB: search_documents(q)
+    VDB--&gt;&gt;RAG: [] (empty results)
+
+    alt No relevant context
+        RAG-&gt;&gt;PM: get_no_context_message(q)
+        PM--&gt;&gt;RAG: fallback_message
+        RAG--&gt;&gt;API: {answer: fallback, sources: []}
+        API--&gt;&gt;User: "I couldn't find information..."
+    end
+</div>
+<h3 id="ollama-unavailable">Ollama Unavailable<a class="headerlink" href="#ollama-unavailable" title="Permanent link">¶</a></h3>
+<div class="mermaid">sequenceDiagram
+    participant User
+    participant API
+    participant LLM
+    participant Ollama
+
+    User-&gt;&gt;API: POST /ask
+    API-&gt;&gt;LLM: generate(prompt)
+    LLM-&gt;&gt;Ollama: POST /api/generate
+    Ollama--&gt;&gt;LLM: Connection refused
+
+    LLM-&gt;&gt;LLM: Catch exception
+    LLM--&gt;&gt;API: raise ServiceUnavailableError
+    API--&gt;&gt;User: HTTP 503 Service Unavailable
+</div>
+<hr/>
+<h2 id="performance-metrics">Performance Metrics<a class="headerlink" href="#performance-metrics" title="Permanent link">¶</a></h2>
+<h3 id="typical-latencies">Typical Latencies<a class="headerlink" href="#typical-latencies" title="Permanent link">¶</a></h3>
+<div class="mermaid">gantt
+    title Question Answering Latency Breakdown
+    dateFormat X
+    axisFormat %L ms
+
+    section Processing
+    Query Embedding           :0, 30
+    Vector Search            :30, 50
+    Prompt Building          :50, 55
+    LLM Generation (first token) :55, 500
+    LLM Generation (complete)    :500, 3000
+    Response Formatting      :3000, 3010
+</div>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Duration</th>
+<th>% of Total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Embedding</strong></td>
+<td>30ms</td>
+<td>1%</td>
+</tr>
+<tr>
+<td><strong>Vector Search</strong></td>
+<td>20ms</td>
+<td>0.7%</td>
+</tr>
+<tr>
+<td><strong>Prompt Building</strong></td>
+<td>5ms</td>
+<td>0.2%</td>
+</tr>
+<tr>
+<td><strong>LLM (First Token)</strong></td>
+<td>445ms</td>
+<td>14.8%</td>
+</tr>
+<tr>
+<td><strong>LLM (Complete)</strong></td>
+<td>2500ms</td>
+<td>83.3%</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td>~3000ms</td>
+<td>100%</td>
+</tr>
+</tbody>
+</table>
+<h3 id="optimization-opportunities">Optimization Opportunities<a class="headerlink" href="#optimization-opportunities" title="Permanent link">¶</a></h3>
+<ol>
+<li><strong>Caching</strong>: Cache embeddings for frequent queries → Save 30ms</li>
+<li><strong>Batch Processing</strong>: Index multiple docs simultaneously → 3x faster indexing</li>
+<li><strong>GPU Acceleration</strong>: Use CUDA for Ollama → 2-5x faster generation</li>
+<li><strong>Model Selection</strong>: Use smaller model (7B vs 8B) → 20% faster</li>
+</ol>
+<hr/>
+<h2 id="data-persistence">Data Persistence<a class="headerlink" href="#data-persistence" title="Permanent link">¶</a></h2>
+<h3 id="chromadb-storage">ChromaDB Storage<a class="headerlink" href="#chromadb-storage" title="Permanent link">¶</a></h3>
+<div class="mermaid">graph TB
+    A[Documents] --&gt; B[Chunks]
+    B --&gt; C[Embeddings]
+    C --&gt; D[ChromaDB]
+
+    D --&gt; E[SQLite Index]
+    D --&gt; F[Vector Data]
+    D --&gt; G[Metadata]
+
+    E --&gt; H[../data/chroma_db/<br/>chroma.sqlite3]
+    F --&gt; H
+    G --&gt; H
+
+    style D fill:#e0f2f1
+    style H fill:#f3e5f5
+</div>
+<p><strong>Directory Structure</strong>:
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-7-1" id="__codelineno-7-1" name="__codelineno-7-1"></a>data/
+<a href="#__codelineno-7-2" id="__codelineno-7-2" name="__codelineno-7-2"></a>└── chroma_db/
+<a href="#__codelineno-7-3" id="__codelineno-7-3" name="__codelineno-7-3"></a>    ├── chroma.sqlite3          # Metadata index
+<a href="#__codelineno-7-4" id="__codelineno-7-4" name="__codelineno-7-4"></a>    ├── 00000000-0000-0000-0000-000000000000/
+<a href="#__codelineno-7-5" id="__codelineno-7-5" name="__codelineno-7-5"></a>    │   └── data_level0.bin     # Vector data
+<a href="#__codelineno-7-6" id="__codelineno-7-6" name="__codelineno-7-6"></a>    └── chroma.log              # Operation log
+</code></pre></div></p>
+<hr/>
+<h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">¶</a></h2>
+<ul>
+<li><a href="../components/">Component Details</a> - Deep dive into each component</li>
+<li><a href="../../api/examples/">API Examples</a> - API usage examples</li>
+<li><a href="../overview/">Architecture Overview</a> - High-level system design</li>
+</ul>
+<hr/>
+<p><strong>Data Flow Summary</strong>:</p>
+<p>✅ <strong>Question Answering</strong>: User query → Embed → Search → Prompt → Generate → Response<br/>
+✅ <strong>Indexing</strong>: Files → Chunk → Embed → Store → Confirm<br/>
+✅ <strong>Health</strong>: Check Ollama + DB → Aggregate → Report<br/>
+✅ <strong>Streaming</strong>: Query → Search → Stream tokens → Complete<br/>
+✅ <strong>Error Handling</strong>: Graceful degradation with fallbacks</p>
+</article>
+</div>
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+</div>
+<button class="md-top md-icon" data-md-component="top" hidden="" type="button">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Back to top
+</button>
+</main>
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+<div class="md-social">
+<a class="md-social__link" href="https://github.com/hanifekaptan/basecamp_handbook_ai_assistant" rel="noopener" target="_blank" title="github.com">
+<svg viewbox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+</a>
+<a class="md-social__link" href="https://python.org" rel="noopener" target="_blank" title="python.org">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6M286.2 444.7a20.4 20.4 0 1 1 0-40.7 20.4 20.4 0 1 1 0 40.7M167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4m-6.6-183.4a20.4 20.4 0 1 1 0 40.8 20.4 20.4 0 1 1 0-40.8"></path></svg>
+</a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.annotate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+<script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>
